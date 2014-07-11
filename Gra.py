@@ -11,11 +11,18 @@ planszaKomputera.dodajStatkiNaPlansze()
 
 while (True):
     if(planszaGracza.czyWszystkieStatkiZatopione()):
-        print("Gratulacje Wygrałeś z komputerem !")
+        print("Przegrałeś z komputerem :(")
         break
     elif(planszaKomputera.czyWszystkieStatkiZatopione()):
-        print("Przegrałeś z komputerem :( ")
+        print("Gratulacje !!!  Wygrałeś z komputerem !")
         break
     while(True):
         wspolrzedne = plansza.pobierzWspolrzedneOdGracza()
+        try:
+            planszaKomputera.strzel(wspolrzedne[0],wspolrzedne[1])
+            break
+        except IndexError:
+            print("Strzeliłeś poza plansze! Spróboj jeszcze raz")
+            continue
+    planszaKomputera.pokazStatki()
 
