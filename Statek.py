@@ -6,8 +6,7 @@ class Statek():
         self.zatopiony = False
 
     def czyZatopiony(self):
-        if(self.zatopiony):
-            return True
+        return self.zatopiony
 
     def getPozycjeMasztow(self):
         return self.pozycjeMasztow
@@ -19,7 +18,6 @@ class Statek():
 
     def getRozmiarStatku(self):
         return self.rozmiarStatku
-
 
 
 
