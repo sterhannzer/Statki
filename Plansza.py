@@ -1,6 +1,8 @@
 from Statek import *
 from random import randint, shuffle
 
+
+
 class Plansza():
 
     def __init__(self, x, y):
@@ -41,11 +43,16 @@ class Plansza():
     #            else:
     #                print("  X  ", end="")
     #    return " "
+    def drukowanieLiczbPoziom(self):
+        for liczba in range(1, self.x+1):
+            print(liczba, end="")
+            print(4*" ", end="")
 
     def drukowaniePlanszy(self, planszaGracza, planszaKomputera):
-        print(" Twoja plansza:" + (self.x*5+3-16)*" "+10*" "+"Plansza komputera:")
+        print("   Twoja plansza:" + (self.x*5+3-17)*" "+10*" "+"Plansza komputera:")
+        str(print("   ", end="")) + str(self.drukowanieLiczbPoziom()) + str(print(11*" ", end="")) + str(self.drukowanieLiczbPoziom()) + str(print("\n"))
         for wiersz in range(len(planszaGracza.getPlansza())):
-            str(self.pokazStatki(planszaGracza, wiersz)) + str(print("          ", end="")) + str(self.pokazStatki(planszaKomputera, wiersz)) + str(print("\n"))
+            str(print(wiersz+1, end="")) + str(self.pokazStatki(planszaGracza, wiersz)) + str(print("          ", end="")) + str(print(wiersz+1, end="")) + str(self.pokazStatki(planszaKomputera, wiersz)) + str(print("\n"))
 
 
     def pokazStatki(self, plansza, wiersz):  # pokazuje plansze do gry (maszty tylko zatopione)
@@ -63,16 +70,18 @@ class Plansza():
 
     def strzel(self, x, y):
         if (self.getPlansza()[y][x] == None):
-            print("Pudło!")
+            print("Pudło!", (x+1,y+1))
             self.getPlansza()[y][x] = "pudlo"
         elif( self.getPlansza()[y][x] == "trafiony"):
-            print("Już zatopiony !")
+            print("Już zatopiony !", (x+1,y+1))
+        elif(self.getPlansza()[y][x] == "pudlo"):
+            print("już tu strzelałeś !", (x+1,y+1))
         else:
-            print("Trafiłeś w maszt !")
+            print("Trafiłeś w maszt !", (x+1,y+1))
             (self.getPlansza())[y][x].pozycjeMasztow.remove([x,y])
             self.getPlansza()[y][x].zatopienieMasztu()
             if( self.getPlansza()[y][x].czyZatopiony()):
-                print("Zatopiłeś cały statek !")
+                print("Zatopiłeś cały statek !" +"\n")
             self.getPlansza()[y][x] = "trafiony"
 
 
@@ -122,14 +131,12 @@ class Plansza():
                 self.dodatkowyRuchZaTrafienie = True
                 break
             if(self.ostatnioTrafionyStatek == None):
-                print("możliwe:", self.mozliweStrzaly)
                 # tutaj może pojawić się problem kiedy lista możliwe strzały jest pusta.
                 if(isinstance(self.getPlansza()[self.mozliweStrzaly[-1][1]][self.mozliweStrzaly[-1][0]], Statek)): # sprawdzanie czy strzał losowy będzie celny
                     self.ostatnioTrafionyStatek = self.getPlansza()[self.mozliweStrzaly[-1][1]][self.mozliweStrzaly[-1][0]]
                     self.generowaniePewnychStrzalowPoTrafieniu(self.mozliweStrzaly[-1][0], self.mozliweStrzaly[-1][1])
                     self.oddanieLosowegoStrzalu()
                     self.dodatkowyRuchZaTrafienie = True
-                    print("pewne:", self.pewneStrzaly)
                     continue
                 else:
                     self.oddanieLosowegoStrzalu()
@@ -160,9 +167,6 @@ class Plansza():
                         self.dodatkowyRuchZaTrafienie = True
                         break
 
-                    #if(isinstance(self.getPlansza()[self.mozliweStrzaly[-1][0]][self.mozliweStrzaly[-1][1]], Statek) ):
-                    #    self.generowaniePewnychStrzalowPoTrafieniu(self.mozliweStrzaly[-1][0], self.mozliweStrzaly[-1][1])
-                    #self.oddanieLosowegoStrzalu()
 
     def usunStrzalyDookolaZatopionegoStatku(self):
         for strzal in self.pewneStrzaly:
@@ -205,7 +209,7 @@ class Plansza():
 #    plansza.strzelajDopokiNieZatopiszCalegoStatku()
 
 #plansza.oddanieStrzaluPoTrafieniu(5,4)
-#plansza.strzel(1,0)
+
 #plansza.strzel(3,0)
 #plansza.strzel(4,0)
 #print(plansza.pewneStrzaly)
