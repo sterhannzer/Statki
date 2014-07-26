@@ -1,4 +1,3 @@
-
 from Statek import *
 from random import randint, shuffle
 
@@ -11,6 +10,7 @@ class Plansza():
         self.statki = []
         self.mozliweStrzaly = []
         self.pewneStrzaly = []
+        self.ostatnioTrafionyStatek = None
 
     def getPlansza(self):
         return self.plansza
@@ -31,23 +31,27 @@ class Plansza():
             for pozycjaMasztu in (statek.pozycjeMasztow):
                 self.getPlansza()[pozycjaMasztu[1]][pozycjaMasztu[0]] = statek
 
+    #def pokazStatki(self):  # pokazuje plansze ze statkami niezatopionymi
+    #    for wiersz in (self.getPlansza()):
+    #        print("\n")
+    #        for statek in (wiersz):
+    #            if (statek == None):
+    #                print("  *  ", end="")
+    #            else:
+    #                print("  X  ", end="")
+    #    return " "
 
-    def drukowaniePlanszy(self, planszaGracza, planszaKomputera):
-        print(" Twoja plansza:" + (self.x*5+3-16)*" "+10*" "+"Plansza komputera:")
-        for wiersz in range(len(planszaGracza.getPlansza())):
-            str(self.pokazStatki(planszaGracza, wiersz)) + str(print("          ", end="")) + str(self.pokazStatki(planszaKomputera, wiersz)) + str(print("\n"))
-
-
-    def pokazStatki(self, plansza, wiersz):  # pokazuje plansze do gry (maszty tylko zatopione)
-        for statek in (plansza.getPlansza()[wiersz]):
-
-            if (statek == "trafiony"):
-                print("  X  ", end="")
-            elif(statek == "pudlo"):
-                print("  O  ", end="")
-            else:
-                print("  *  ", end="")
-
+    def pokazStatki(self):  # pokazuje plansze do gry (maszty tylko zatopione)
+        for wiersz in (self.getPlansza()):
+            print("\n")
+            for statek in (wiersz):
+                if (statek == "trafiony"):
+                    print("  X  ", end="")
+                elif(statek == "pudlo"):
+                    print("  O  ", end="")
+                else:
+                    print("  *  ", end="")
+        print("\n")
 
 
     def strzel(self, x, y):
@@ -57,12 +61,13 @@ class Plansza():
         elif( self.getPlansza()[y][x] == "trafiony"):
             print("Już zatopiony !")
         else:
-            print("Trafiono w maszt !")
+            print("Trafiłeś w maszt !")
             (self.getPlansza())[y][x].pozycjeMasztow.remove([x,y])
             self.getPlansza()[y][x].zatopienieMasztu()
             if( self.getPlansza()[y][x].czyZatopiony()):
-                print("Zatopiono cały statek !")
+                print("Zatopiłeś cały statek !")
             self.getPlansza()[y][x] = "trafiony"
+
 
 
     def generowanieMozliwychStrzalow(self):
@@ -100,18 +105,43 @@ class Plansza():
         for poz in (tymczasowePozycje):    # sprawdzanie pozycji do strzalu jesli jest poza plansza: usun.
             if(poz[1] < 0 or poz[1] > self.y-1 or poz[0] < 0 or poz[0] > self.x-1):
                 self.pewneStrzaly.remove(poz)
-        list(set(self.pewneStrzaly))    #usuwanie duplikatów listy "pewneStrzaly"
-
+        tymczasowePewneStrzaly = []
+        [tymczasowePewneStrzaly.append(x) for x in self.pewneStrzaly if x not in tymczasowePewneStrzaly]
+        self.pewneStrzaly = tymczasowePewneStrzaly
 
     def strzelajDopokiNieZatopiszCalegoStatku(self):
-        if(self.pewneStrzaly.__len__() != 0):           #jesli poprzednio był celny strzał to w pewnych strzałach będą
-            wspolrzedne = self.pewneStrzaly.pop()       # pozycje w pierwszej kolejnosci do strzalu.
-            self.strzel(wspolrzedne[0], wspolrzedne[1])
-            self.mozliweStrzaly.remove(wspolrzedne)
-        else:
-            if(self.getPlansza()[self.mozliweStrzaly[-1][0]][self.mozliweStrzaly[-1][1]] == Statek ):
-                self.generowaniePewnychStrzalowPoTrafieniu(self.mozliweStrzaly[-1][0], self.mozliweStrzaly[-1][1])
-            self.oddanieLosowegoStrzalu()
+        while(True):
+            if(self.ostatnioTrafionyStatek == None):
+                print("możliwe:", self.mozliweStrzaly)
+
+                if(isinstance(self.getPlansza()[self.mozliweStrzaly[-1][1]][self.mozliweStrzaly[-1][0]], Statek)): # sprawdzanie czy strzał losowy będzie celny
+                    self.ostatnioTrafionyStatek = self.getPlansza()[self.mozliweStrzaly[-1][1]][self.mozliweStrzaly[-1][0]]
+                    self.generowaniePewnychStrzalowPoTrafieniu(self.mozliweStrzaly[-1][0], self.mozliweStrzaly[-1][1])
+                    self.oddanieLosowegoStrzalu()
+                    print("pewne:", self.pewneStrzaly)
+                    continue
+                else:
+                    self.oddanieLosowegoStrzalu()
+                    break
+            else:
+                while(True):
+                    if(not self.ostatnioTrafionyStatek.czyZatopiony()): # jesli nie jest zatopiony to:                               #jesli poprzednio był celny strzał to w pewnych strzałach będą
+                        wspolrzedne = self.pewneStrzaly.pop()       # pozycje w pierwszej kolejnosci do strzalu.
+                        self.mozliweStrzaly.remove(wspolrzedne)
+                        if(isinstance(self.getPlansza()[wspolrzedne[1]][wspolrzedne[0]], Statek)):
+                            self.strzel(wspolrzedne[0], wspolrzedne[1])
+
+                            self.generowaniePewnychStrzalowPoTrafieniu(wspolrzedne[0], wspolrzedne[1])
+                            continue
+                        else:
+                            self.strzel(wspolrzedne[0], wspolrzedne[1])
+                            break
+                    else:
+                        self.ostatnioTrafionyStatek = None
+
+                    #if(isinstance(self.getPlansza()[self.mozliweStrzaly[-1][0]][self.mozliweStrzaly[-1][1]], Statek) ):
+                    #    self.generowaniePewnychStrzalowPoTrafieniu(self.mozliweStrzaly[-1][0], self.mozliweStrzaly[-1][1])
+                    #self.oddanieLosowegoStrzalu()
 
 
     def czyWszystkieStatkiZatopione(self):
@@ -136,9 +166,9 @@ class Plansza():
 
 
 
-plansza = Plansza(5,5)
-plansza.tworzenieStatkow()
-plansza.dodajStatkiNaPlansze()
+#plansza = Plansza(5,5)
+#plansza.tworzenieStatkow()
+#plansza.dodajStatkiNaPlansze()
 #plansza.oddanieStrzaluPoTrafieniu(5,4)
 #plansza.strzel(1,0)
 #plansza.strzel(3,0)
