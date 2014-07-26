@@ -1,12 +1,12 @@
 from Plansza import *
 from Statek import *
 
-planszaGracza = Plansza(5,5)
+planszaGracza = Plansza(6,6)
 planszaGracza.tworzenieStatkow()
 planszaGracza.dodajStatkiNaPlansze()
 planszaGracza.generowanieMozliwychStrzalow()
 
-planszaKomputera = Plansza(5,5)
+planszaKomputera = Plansza(6,6)
 planszaKomputera.tworzenieStatkow()
 planszaKomputera.dodajStatkiNaPlansze()
 
@@ -21,16 +21,16 @@ while (True):
     while(True):
         wspolrzedne = planszaGracza.pobierzWspolrzedneOdGracza()
         try:
+            print("\nTy :")
             planszaKomputera.strzel(wspolrzedne[0],wspolrzedne[1])
             if planszaKomputera.getPlansza()[wspolrzedne[1]][wspolrzedne[0]] == "trafiony" and not planszaKomputera.czyWszystkieStatkiZatopione():
-                print("Plansza komputera: ")
-                planszaKomputera.pokazStatki()
                 continue
             else:
+                print("\nKomputer :")
                 planszaGracza.strzelajDopokiNieZatopiszCalegoStatku()
-                planszaGracza.pokazStatki()
-                print("\n \n")
+                print("\n")
+            planszaGracza.drukowaniePlanszy(planszaGracza, planszaKomputera)
+
         except IndexError:
             print("Strzeliłeś poza plansze! Spróboj jeszcze raz")
             continue
-
