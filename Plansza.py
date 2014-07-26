@@ -42,17 +42,23 @@ class Plansza():
     #                print("  X  ", end="")
     #    return " "
 
-    def pokazStatki(self):  # pokazuje plansze do gry (maszty tylko zatopione)
-        for wiersz in (self.getPlansza()):
-            print("\n")
-            for statek in (wiersz):
-                if (statek == "trafiony"):
-                    print("  X  ", end="")
-                elif(statek == "pudlo"):
-                    print("  O  ", end="")
-                else:
-                    print("  *  ", end="")
-        print("\n")
+    def drukowaniePlanszy(self, planszaGracza, planszaKomputera):
+        print(" Twoja plansza:" + (self.x*5+3-16)*" "+10*" "+"Plansza komputera:")
+        for wiersz in range(len(planszaGracza.getPlansza())):
+            str(self.pokazStatki(planszaGracza, wiersz)) + str(print("          ", end="")) + str(self.pokazStatki(planszaKomputera, wiersz)) + str(print("\n"))
+
+
+    def pokazStatki(self, plansza, wiersz):  # pokazuje plansze do gry (maszty tylko zatopione)
+        for statek in (plansza.getPlansza()[wiersz]):
+
+            if (statek == "trafiony"):
+                print("  X  ", end="")
+            elif(statek == "pudlo"):
+                print("  O  ", end="")
+            else:
+                print("  *  ", end="")
+
+
 
 
     def strzel(self, x, y):
