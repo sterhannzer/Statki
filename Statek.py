@@ -1,6 +1,6 @@
-
 class Statek():
-    def __init__(self, rozmiarStatku, pozycjeMasztow):   #pozycjeMasztow jest listą np. [[1,2],[2,2]]
+    def __init__(self, rozmiarStatku, pozycjeMasztow):
+        # pozycjeMasztow jest listą np. [[1,2],[2,2]]
         self.rozmiarStatku = rozmiarStatku
         self.pozycjeMasztow = pozycjeMasztow
         self.zatopiony = False
@@ -18,6 +18,3 @@ class Statek():
 
     def getRozmiarStatku(self):
         return self.rozmiarStatku
-
-
-
